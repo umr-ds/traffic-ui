@@ -27,6 +27,9 @@ def plot_pcap(filename):
     import matplotlib
     matplotlib.use('Agg')
 
+    import matplotlib.pyplot as plt
+    plt.rcParams['figure.figsize'] = (9, 7)
+
     fullpath = check_fetch_fullpath(filename)
     req_flow = flow(fullpath)
     req_flow.lookupASN()
@@ -35,6 +38,8 @@ def plot_pcap(filename):
     imgdata = BytesIO()
     plt.savefig(imgdata, format='png')
     imgdata.seek(0)
+
+    plt.close()
 
     response.content_type = 'image/png'
     return imgdata
