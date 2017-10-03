@@ -42,10 +42,11 @@ with import <nixpkgs> {};
       };
     };
 
-    # Overriding matplotlib to use a backend, which is GTK2 for me.
+    # Overriding matplotlib to use a GUI-backend, which is GTK2 for me.
     matplotlib = pkgs.python27Packages.matplotlib.override {
       enableGtk2 = true;
     };
 
-  in python27.withPackages (ps: [ matplotlib ps.netaddr ps.numpy pypcap ])
+  in python27.withPackages (ps: [
+    ps.bottle matplotlib ps.netaddr ps.numpy pypcap ])
 ).env

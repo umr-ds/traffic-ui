@@ -265,7 +265,7 @@ class flow:
         return "flow({}\n     {})".format(out[0], "\n     ".join(out[1:]))
     
     '''show a plot of the traffic graphs'''
-    def show(self, scale="linear"):
+    def show(self, scale="linear", show=True):
         import matplotlib.pyplot as plt
         import matplotlib.patches as mpatches
         
@@ -290,7 +290,10 @@ class flow:
         ax2.set_ylim(bottom=0)
         ax1.set_xlim(left=0, right=(len(forward_traffic)-1)/sampling_frequency)
         plt.yscale(scale)
-        plt.show(block=False)
+        if show:
+            plt.show(block=False)
+        else:
+            return plt
 
     def defaultGapCounts(self):
         forward_traffic = computeTrafficGraph(self.forward, 0.0, self.duration)
