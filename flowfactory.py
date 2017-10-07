@@ -53,6 +53,12 @@ class Flowfactory:
         files = filter(
           lambda f: f == self.pickle_name(filename), listdir(self.cache_path))
         return files[0] if files else None
+
+    def save_flow(self, flow):
+        'Saves or updates a cached flow.'
+        pickle_file = self.cache_path + '/' + self.pickle_name(flow._filename)
+        with open(pickle_file, 'w+') as out_file:
+            pickle(flow, out_file)
         
     def get_flow(self, filename):
         '''Returns a flow for the given filename from the original file or the
