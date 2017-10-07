@@ -1,2 +1,11 @@
+# cache and input will be changed soon™
+
+# caches:
 asn.db
+cache/
+
+# input:
+input
+
+# python-foo:
 *.pyc

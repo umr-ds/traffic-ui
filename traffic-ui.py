@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from bottle import abort, route, run, static_file
-from flowinspector import flow
-from io import BytesIO
+from flowfactory import flow, Flowfactory
 from os import listdir, path
 
 pcap_path = './input'
-img_cache_path = './cache'
+cache_path = './cache'
 
 @route('/')
 def index():
@@ -25,7 +24,7 @@ def show_pcap(filename):
 def plot_pcap(filename):
     req_flow = flow_from_filename(filename)
     img_name = req_flow.hash + '.png'
-    plot_path = img_cache_path + '/' + img_name
+    plot_path = cache_path + '/' + img_name
 
     if not path.isfile(plot_path):
         import matplotlib
@@ -38,9 +37,10 @@ def plot_pcap(filename):
         plot.savefig(plot_path, format='png')
         plot.close()
 
-    return static_file(img_name, root=img_cache_path)
+    return static_file(img_name, root=cache_path)
 
 def flow_from_filename(filename):
+    flow_fac = Flowfactory(cache_path)
     fullpath = pcap_path + '/' + filename
 
     if not path.isfile(fullpath):
@@ -50,9 +50,7 @@ def flow_from_filename(filename):
     if path.dirname(fullpath) != pcap_path:
         abort(403, 'Not allowed')
 
-    req_flow = flow(fullpath)
-    req_flow.lookupASN()
-    return req_flow
+    return flow_fac.get_flow(fullpath)
 
 
 if __name__ == "__main__":

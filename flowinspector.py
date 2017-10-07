@@ -108,8 +108,6 @@ class flow:
         self.bmetric = computeMetrics(self.backward, 0.0, self.duration)
         
     def _readPcap(self, filename):
-        from binascii import crc32
-
         thePcap = pcap.pcap(filename)
         self.forward = []
         self.backward = []
@@ -123,10 +121,6 @@ class flow:
         self.start = ts
         self.end = ts
 
-        # generate a simple CRC-hash to identify the flow
-        crc_pkt = crc32(pkt)
-        crc_ts  = crc32(float.hex(ts))
-
         # add syn packet
         self.forward.append((0.0, len(ip), dscp))
         
@@ -135,8 +129,6 @@ class flow:
             if len(pkt) < 14+20: continue
             if ts < self.start: continue
         
-            crc_pkt = crc32(pkt, crc_pkt) & 0xffffffff
-            crc_ts  = crc32(float.hex(ts), crc_ts) & 0xffffffff
             # set the latest packet as a potential end
             self.end = ts
 
@@ -151,7 +143,6 @@ class flow:
         del(thePcap)
         self.duration = self.end - self.start
         self.proto = struct.unpack("!B", ip[9:10])[0]
-        self.hash = format(crc_pkt << 32 | crc_ts, 'x')
 
     INTERVALS = [0]+[2**x for x in range(12)]
     FEATURE_ORDER = ["packets","bytes","bytes_avg","bytes_std","iat_avg","iat_std","traffic_avg","traffic_std","dscp_median"]
