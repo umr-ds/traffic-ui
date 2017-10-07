@@ -1,10 +1,6 @@
-# cache and input will be changed soon™
-
-# caches:
+# cache and input (will be changed soon™)
 asn.db
-cache/
-
-# input:
+cache
 input
 
 # python-foo:
