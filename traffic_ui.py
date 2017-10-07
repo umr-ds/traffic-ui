@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from bottle import abort, redirect, request, route, run, static_file
+from bottle import abort, redirect, request, route, run, static_file, template
 from flowfactory import flow, Flowfactory
 from os import listdir, makedirs, path
 
@@ -44,16 +44,13 @@ def rating_request(filename, fun):
 @route('/')
 def index():
     pcap_list = filter(lambda f: f.endswith('.pcap'), listdir(pcap_path))
-    list_body = map(lambda f: '<li><a href="/show/{0}">{0}</a></li>'.format(f), pcap_list)
-    list_full = '<ul>{}</ul>'.format('\n'.join(list_body))
-    return '<h1>Overview</h1>' + list_full
+    return template('index', pcap_list=pcap_list)
 
 ## Flow details and plot
 @route('/show/<filename>')
 def show_pcap(filename):
     req_flow = flow_from_filename(filename)
-    return '<img src="/plot/{0}.png" /><pre>{0}\n{1}\n\n{2}</pre>'.format(
-      filename, ' '.join(req_flow.ratings), repr(req_flow))
+    return template('flow_details', filename=filename, flow=req_flow)
 
 @route('/plot/<filename>.png')
 def plot_pcap(filename):
