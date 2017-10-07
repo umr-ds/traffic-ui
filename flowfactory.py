@@ -2,19 +2,39 @@
 # -*- coding: utf-8 -*-
 
 from flowinspector import flow as fi_flow
-from pickle import dump as pickle, load as unpickle
 from os import listdir, path, remove
+from pickle import dump as pickle, load as unpickle
 
 class flow(fi_flow):
-    'Overload the original flow for ratings and stuff'
+    '''Overload the original flow for interaction with the Flowfactory,
+       extra fields and stuff'''
 
     def __init__(self, filename, ratings=[]):
         fi_flow.__init__(self, filename)
-        # user-ratings for the traffic-ui
+
         self.ratings = ratings
-        # set ASN
+
         self.lookupASN()
         self.hash = Flowfactory.head_hash(filename)
+
+    def plot_path(self, flow_factory):
+        '''Saves or fetches a plot to a cache observed by a Flowfactory and
+           returns the complete path of the file.'''
+        plot_path = flow_factory.cache_path + "/" + \
+          Flowfactory.pickle_name(self._filename, ext='.png')
+
+        if not path.isfile(plot_path):
+            import matplotlib
+            matplotlib.use('Agg')
+
+            import matplotlib.pyplot as plt
+            plt.rcParams['figure.figsize'] = (9, 7)
+
+            plot = self.show(show=False)
+            plot.savefig(plot_path, format='png')
+            plot.close()
+
+        return plot_path
 
 class Flowfactory:
     'A class to store cached versions of flows and auto-load them.'
@@ -23,10 +43,10 @@ class Flowfactory:
         self.cache_path = cache_path
 
     @staticmethod
-    def pickle_name(filename):
+    def pickle_name(filename, ext='.pickle'):
         'Returns a relative pickled filename from the given pcap.'
         from re import sub
-        return sub('.pcap$', '.pickle', path.basename(filename))
+        return sub('.pcap$', ext, path.basename(filename))
 
     def find_pickle(self, filename):
         'Tries to find a pickled filename (or None) for the given filename.'
@@ -51,8 +71,13 @@ class Flowfactory:
                 ret_flow = unpickle(in_file)
 
             if ret_flow.hash != Flowfactory.head_hash(filename):
-                print('{} has changed, rehashing!'.format(filename))
+                # pcap-file was changed, remove it from cache and start clean
+                img_file = self.cache_path + self.pickle_name(filename, ext='.png')
+
                 remove(pickle_file)
+                if path.isfile(img_file):
+                    remove(img_file)
+
                 return self.get_flow(filename)
 
         return ret_flow

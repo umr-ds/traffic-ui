@@ -23,24 +23,13 @@ def show_pcap(filename):
 @route('/plot/<filename>.png')
 def plot_pcap(filename):
     req_flow = flow_from_filename(filename)
-    img_name = req_flow.hash + '.png'
-    plot_path = cache_path + '/' + img_name
+    flow_factory = Flowfactory(cache_path)
 
-    if not path.isfile(plot_path):
-        import matplotlib
-        matplotlib.use('Agg')
-
-        import matplotlib.pyplot as plt
-        plt.rcParams['figure.figsize'] = (9, 7)
-
-        plot = req_flow.show(show=False)
-        plot.savefig(plot_path, format='png')
-        plot.close()
-
-    return static_file(img_name, root=cache_path)
+    filepath = req_flow.plot_path(flow_factory)
+    return static_file(path.basename(filepath), root=path.dirname(filepath))
 
 def flow_from_filename(filename):
-    flow_fac = Flowfactory(cache_path)
+    flow_factory = Flowfactory(cache_path)
     fullpath = pcap_path + '/' + filename
 
     if not path.isfile(fullpath):
@@ -50,7 +39,7 @@ def flow_from_filename(filename):
     if path.dirname(fullpath) != pcap_path:
         abort(403, 'Not allowed')
 
-    return flow_fac.get_flow(fullpath)
+    return flow_factory.get_flow(fullpath)
 
 
 if __name__ == "__main__":
