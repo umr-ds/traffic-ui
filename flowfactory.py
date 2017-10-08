@@ -69,8 +69,7 @@ class Flowfactory:
         if not has_pickle:
             # Read file and save cached file
             ret_flow = flow(filename)
-            with open(pickle_file, 'w+') as out_file:
-                pickle(ret_flow, out_file)
+            self.save_flow(ret_flow)
         else:
             # Restore file from cache
             with open(pickle_file, 'r') as in_file:

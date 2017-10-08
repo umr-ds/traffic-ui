@@ -5,21 +5,37 @@ from bottle import abort, redirect, request, route, run, static_file, template
 from flowfactory import flow, Flowfactory
 from os import listdir, makedirs, path
 
-## Config
-pcap_path = './input'
-cache_path = './cache'
-
 ## Helper functions
+def parse_config(filename):
+    '''Reads the INI-config and returns a namedtuple called Config which
+       contains the fields.'''
+    from ConfigParser import ConfigParser
+    from collections import namedtuple
+    from json import loads as parse_list
+
+    Config = namedtuple(
+      'Config', ['host', 'port', 'input', 'cache', 'ratings'])
+
+    config = ConfigParser()
+    config.read(filename)
+
+    return Config(
+      config.get('httpd', 'host'),
+      config.getint('httpd', 'port'),
+      config.get('dirs', 'input').rstrip('/'),
+      config.get('dirs', 'cache').rstrip('/'),
+      parse_list(config.get('ratings', 'ratings')))
+
 def flow_from_filename(filename):
     '''Checks if a requested pcap-flow exists and returns the flow from the
        Flowfactory. The HTTP-connection will be aborted otherwise.'''
-    fullpath = pcap_path + '/' + filename
+    fullpath = conf.input + '/' + filename
 
     if not path.isfile(fullpath):
         abort(404, 'No such file')
     if not fullpath.endswith('.pcap'):
         abort(403, 'Not allowed')
-    if path.dirname(fullpath) != pcap_path:
+    if path.dirname(fullpath) != conf.input:
         abort(403, 'Not allowed')
 
     return flow_factory.get_flow(fullpath)
@@ -43,7 +59,7 @@ def rating_request(filename, fun):
 ## List available pcaps (index)
 @route('/')
 def index():
-    pcap_list = filter(lambda f: f.endswith('.pcap'), listdir(pcap_path))
+    pcap_list = filter(lambda f: f.endswith('.pcap'), listdir(conf.input))
     return template('index', pcap_list=pcap_list)
 
 ## Flow details and plot
@@ -67,9 +83,27 @@ def rating_add(filename):
 def rating_del(filename):
     rating_request(filename, lambda f, r: filter(lambda e: e != r, f.ratings))
 
-if __name__ == "__main__":
-    if not path.isdir(cache_path):
-        makedirs(cache_path)
 
-    flow_factory = Flowfactory(cache_path)
-    run(host='localhost', port=8080, debug=True, reloader=True)
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config', help='path to config (default: ./config.ini)')
+    args = parser.parse_args()
+
+    if args.config == None and not path.isfile('./config.ini'):
+        print('No config was found!\n' + \
+          'Please place a config.ini in your current working directory or ' + \
+          'supply a path by -c. If you\'re on a fresh instance, copy the ' + \
+          'config-example.ini to config.ini and modify your copy.')
+        exit(1)
+
+    conf = parse_config(args.config if args.config != None else './config.ini')
+
+    if not path.isdir(conf.cache):
+        makedirs(conf.cache)
+
+    import cymru
+    cymru.DB_PATH = conf.cache + '/asn.db'
+
+    flow_factory = Flowfactory(conf.cache)
+    run(host=conf.host, port=conf.port, debug=True, reloader=True)

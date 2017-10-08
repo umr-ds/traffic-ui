@@ -1,7 +1,3 @@
-# cache and input (will be changed soon™)
-asn.db
-cache
-input
-
-# python-foo:
+cache/
 *.pyc
+config.ini
