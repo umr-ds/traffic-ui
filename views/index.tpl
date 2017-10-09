@@ -1,7 +1,7 @@
-<h1>Overview</h1>
+% rebase('base.tpl', title='Overview')
 
-<ul>
+<ul class="pure-menu-list">
   % for pcap in pcap_list:
-    <li><a href="/show/{{pcap}}">{{pcap}}</a></li>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="/show/{{pcap}}">{{pcap}}</a></li>
   % end
 </ul>

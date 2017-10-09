@@ -84,6 +84,11 @@ def rating_add(filename):
 def rating_del(filename):
     rating_request(filename, lambda f, r: filter(lambda e: e != r, f.ratings))
 
+## Static files (CSS, JS, …)
+@route('/inc/<path:path>')
+def static_route(path):
+    return static_file(path, root='./inc')
+
 
 if __name__ == "__main__":
     import argparse
