@@ -14,7 +14,7 @@ def parse_config(filename):
     from json import loads as parse_list
 
     Config = namedtuple(
-      'Config', ['host', 'port', 'input', 'cache', 'ratings'])
+      'Config', ['host', 'port', 'input', 'cache', 'ratings', 'store'])
 
     config = ConfigParser()
     config.read(filename)
@@ -24,7 +24,8 @@ def parse_config(filename):
       config.getint('httpd', 'port'),
       config.get('dirs', 'input').rstrip('/'),
       config.get('dirs', 'cache').rstrip('/'),
-      parse_list(config.get('ratings', 'ratings')))
+      parse_list(config.get('ratings', 'ratings')),
+      config.get('ratings', 'store'))
 
 def flow_from_filename(filename):
     '''Checks if a requested pcap-flow exists and returns the flow from the
@@ -105,5 +106,5 @@ if __name__ == "__main__":
     import cymru
     cymru.DB_PATH = conf.cache + '/asn.db'
 
-    flow_factory = Flowfactory(conf.cache)
+    flow_factory = Flowfactory(conf.cache, conf.store)
     run(host=conf.host, port=conf.port, debug=True, reloader=True)
