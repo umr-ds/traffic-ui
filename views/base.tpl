@@ -6,12 +6,10 @@
     <title>TrafficUI - {{title}}</title>
     
     <link rel="stylesheet" href="/inc/css/pure-min.css">
-        <!--[if lte IE 8]>
-            <link rel="stylesheet" href="/inc/css/layouts/side-menu-old-ie.css">
-        <![endif]-->
-        <!--[if gt IE 8]><!-->
-            <link rel="stylesheet" href="/inc/css/layouts/side-menu.css">
-        <!--<![endif]-->
+    <link rel="stylesheet" href="/inc/css/layouts/side-menu.css">
+    <link rel="stylesheet" href="/inc/css/layouts/etc.css">
+
+    <script src="/inc/js/rating.js"></script>
 </head>
 <body>
 <div id="layout">
@@ -46,6 +44,5 @@
 </div>
 
 <script src="/inc/js/ui.js"></script>
-
 </body>
 </html>

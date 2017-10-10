@@ -1,49 +1,49 @@
 % rebase('base.tpl', title='Flowdetails', subtitle=filename)
 
-<img class="pure-img" src="/plot/{{filename}}.png" />
+<div class="pure-g">
+  <div class="pure-u-5-6">
+    <img class="pure-img" src="/plot/{{filename}}.png" />
+  </div>
+  <div class="pure-u-1-6">
+    <h2 class="content-subhead">Ratings</h2>
+    <aside id="rating-table-response" class="hidden">
+    </aside>
 
-<h2 class="content-subhead">Ratings</h2>
-<table class="pure-table pure-table-bordered">
-  <thead>
-    <tr>
-      <th>Rating</th>
-    </tr>
-  </thead>
-  <tbody>
-  % for rating in flow.ratings:
-  <tr>
-    <td>{{rating}}</td>
-  </tr>
-  % end
-  <tbody>
-</table>
+    <table class="pure-table pure-table-bordered">
+      <thead>
+        <tr>
+          <th>Rating</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rating-table-body">
+      </tbody>
+    </table>
 
-<h3>Modify</h3>
-<!-- TODO: use a data list for allowed ratings -->
-<form class="pure-form pure-form-aligned" action="/rating/add/{{filename}}" method="post">
-  <input type="text" name="rating" placeholder="New rating">
-  <input type="submit" value="Add" class="pure-button pure-button-primary">
-</form>
-
-<form class="pure-form pure-form-aligned" action="/rating/del/{{filename}}" method="post">
-  <style scoped>
-    .button-warning {
-      color: white;
-      border-radius: 4px;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-      background: rgb(223, 117, 20); /* this is an orange */
-    }
-  </style>
-
-  <select name="rating" class="pure-input">
-    % for rating in flow.ratings:
-    <option value="{{rating}}">{{rating}}</option>
-    %end
-  </select>
-  <input type="submit" value="Remove" class="button-warning pure-button">
-</form>
+    <!-- TODO: use a data list for allowed ratings -->
+    <form id="rating-new-form" class="pure-form pure-form-aligned">
+      <fieldset>
+        <input type="text" id="rating-new-text" placeholder="New rating">
+      </fieldset>
+    </form>
+  </div>
+</div>
 
 <h2 class="content-subhead">tl;dr</h2>
 <pre>
 {{repr(flow)}}
 </pre>
+
+<script>
+  ratingList('{{filename}}');
+
+  var form = document.getElementById('rating-new-form');
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var rating = document.getElementById('rating-new-text');
+    ratingAdd('{{filename}}', rating.value);
+
+    rating.value = '';
+  });
+</script>

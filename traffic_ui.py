@@ -41,21 +41,25 @@ def flow_from_filename(filename):
 
     return flow_factory.get_flow(fullpath)
 
-def rating_request(filename, fun):
+def rating_request(fun):
     '''The difference between adding and removing ratings is minimal. This
        helper-function will handle an add/del-request where all the logic,
        which is basically adding or removing an element, will be given as a
        lambda which receives the flow and the rating and should return a
        new list of ratings.'''
+    filename  = request.forms.get('filename')
     rating = request.forms.get('rating')
+
+    if filename  == None:
+        return {'status': 'fail', 'msg': 'Parameter filename is missing'}
     if rating == None:
-        abort(500, 'parameter is missing')
+        return {'status': 'fail', 'msg': 'Parameter rating is missing'}
 
     req_flow = flow_from_filename(filename)
     req_flow.ratings = list(set(fun(req_flow, rating)))
-
     flow_factory.save_flow(req_flow)
-    redirect('/show/{}'.format(filename))
+
+    return {'status': 'ok', 'msg': 'noice :3'}
 
 ## List available pcaps (index)
 @route('/')
@@ -76,13 +80,22 @@ def plot_pcap(filename):
     return static_file(path.basename(filepath), root=path.dirname(filepath))
 
 ## Flow ratings
-@route('/rating/add/<filename>', method='POST')
-def rating_add(filename):
-    rating_request(filename, lambda f, r: f.ratings + [r])
+@route('/rating/list', method='POST')
+def rating_list():
+    filename  = request.forms.get('filename')
+    if filename  == None:
+        return {'status': 'fail', 'msg': 'Parameter filename is missing'}
 
-@route('/rating/del/<filename>', method='POST')
-def rating_del(filename):
-    rating_request(filename, lambda f, r: filter(lambda e: e != r, f.ratings))
+    req_flow = flow_from_filename(filename)
+    return {'status': 'ok', 'ratings': req_flow.ratings}
+ 
+@route('/rating/add', method='POST')
+def rating_add():
+    return rating_request(lambda f, r: f.ratings + [r])
+
+@route('/rating/del', method='POST')
+def rating_del():
+    return rating_request(lambda f, r: filter(lambda e: e != r, f.ratings))
 
 ## Static files (CSS, JS, …)
 @route('/inc/<path:path>')
