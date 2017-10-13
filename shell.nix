@@ -31,9 +31,7 @@ with import <nixpkgs> {};
           '')
       ];
 
-      buildInputs = [ pkgs.libpcap ];
-
-      doCheck = false;
+      buildInputs = with pkgs; [ libpcap python27Packages.dpkt ];
 
       meta = {
         homepage = https://github.com/pynetwork/pypcap;
