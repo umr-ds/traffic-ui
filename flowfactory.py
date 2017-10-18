@@ -142,6 +142,13 @@ class Flowfactory:
 
         return ret_flow
 
+    def all_flows(self, input_dir):
+        'Creates a list of pcaps in input_dir as a tuple with stored ratings.'
+        flow_dicts = dict((path.basename(r[0]), r[2]) for r in self.read_store())
+        flow_files = filter(lambda f: f.endswith('.pcap'), listdir(input_dir))
+
+        return map(lambda f: (f, flow_dicts.get(f, [])), flow_files)
+
     @staticmethod
     def head_hash(filename):
         'Caluclate a hash for the head of a file'

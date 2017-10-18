@@ -23,10 +23,11 @@
 
     <div id="menu">
         <div class="pure-menu">
-            <a class="pure-menu-heading" href="#">TrafficUI</a>
+            <a class="pure-menu-heading">TrafficUI</a>
 
             <ul class="pure-menu-list">
                 <li class="pure-menu-item"><a href="/" class="pure-menu-link">Overview</a></li>
+                <li class="pure-menu-item"><a href="/show-random" class="pure-menu-link">Unrated Flow</a></li>
             </ul>
         </div>
     </div>

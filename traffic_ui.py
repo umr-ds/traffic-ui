@@ -66,10 +66,15 @@ def rating_request(fun):
 ## List available pcaps (index)
 @route('/')
 def index():
-    pcap_list = filter(lambda f: f.endswith('.pcap'), listdir(conf.input))
-    return template('index', pcap_list=pcap_list)
+    return template('index', flows=flow_factory.all_flows(conf.input))
 
 ## Flow details and plot
+@route('/show-random')
+def show_random():
+    from random import choice
+    pcaps = [f[0] for f in flow_factory.all_flows(conf.input) if f[1] == []]
+    redirect('/show/{}'.format(choice(pcaps)))
+
 @route('/show/<filename>')
 def show_pcap(filename):
     req_flow = flow_from_filename(filename)

@@ -1,7 +1,18 @@
 % rebase('base.tpl', title='Overview')
 
-<ul class="pure-menu-list">
-  % for pcap in pcap_list:
-    <li class="pure-menu-item"><a class="pure-menu-link" href="/show/{{pcap}}">{{pcap}}</a></li>
+<table class="pure-table pure-table-striped">
+<thead>
+  <tr>
+    <th>Filename</th>
+    <th>Ratings</th>
+  </tr>
+</thead>
+<tbody>
+  % for flow in flows:
+  <tr>
+    <td><a class="pure-menu-link" href="/show/{{flow[0]}}">{{flow[0]}}</a></td>
+    <td>{{', '.join(flow[1])}}</td>
+  </tr>
   % end
-</ul>
+</tbody>
+</table>
