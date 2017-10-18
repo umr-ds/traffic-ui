@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrafficUI - {{title}}</title>
     
+    <link rel="stylesheet" href="/inc/css/awesomplete.css">
+    <link rel="stylesheet" href="/inc/css/etc.css">
     <link rel="stylesheet" href="/inc/css/pure-min.css">
-    <link rel="stylesheet" href="/inc/css/layouts/side-menu.css">
-    <link rel="stylesheet" href="/inc/css/layouts/etc.css">
+    <link rel="stylesheet" href="/inc/css/side-menu.css">
 
+    <script src="/inc/js/awesomplete.min.js"></script>
     <script src="/inc/js/rating.js"></script>
 </head>
 <body>

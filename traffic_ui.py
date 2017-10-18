@@ -71,7 +71,7 @@ def index():
 @route('/show/<filename>')
 def show_pcap(filename):
     req_flow = flow_from_filename(filename)
-    return template('flow_details', filename=filename, flow=req_flow)
+    return template('flow_details', filename=filename, flow=req_flow, conf=conf)
 
 @route('/plot/<filename>.png')
 def plot_pcap(filename):

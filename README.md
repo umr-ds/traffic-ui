@@ -9,8 +9,7 @@ Copy the `config-example.ini` to `config.ini` and configure it for your needs.
 The `shell.nix`-file knows what to do. Just let [nix][] do the work for you.
 
 ```bash
-$ nix-shell
-[nix-shell]$ ./traffic_ui.py
+$ nix-shell --run ./traffic_ui.py
 ```
 
 ### Other systems
@@ -18,7 +17,7 @@ Install the *Python Libraries* listed below with your favorite tools and start
 `traffic_up.py`.
 
 ## Dependencies
-### Python Libraries
+### Backend, Python Libraries
 
 - [Bottle][bottle] (MIT license)
 - [Matplotlib][matplotlib] ([Matplotlib license][matplotlib-license])
@@ -26,12 +25,13 @@ Install the *Python Libraries* listed below with your favorite tools and start
 - [NumPy][numpy] ([NumPy license][numpy-license])
 - [pypcap][] (BSD-3-Clause license)
 
-### Pure CSS Layout
+### Frontend
 
-Layout using [Pure CSS][pure] (BSD-3-Clause license) compiled from the
-[pure-site][] project. The layout is free to use under the zLib license.
+- [Pure CSS-Framework][pure] (BSD-3-Clause license)
+- [Responsive Side Menu, Pure Layout][pure-layout] (zLib license)
+- [Awesomplete][awesomplete] (MIT license)
 
-
+[awesomplete]: https://leaverou.github.io/awesomplete/
 [bottle]: http://bottlepy.org/
 [matplotlib]: https://matplotlib.org/
 [matplotlib-license]: https://github.com/matplotlib/matplotlib/blob/master/LICENSE/LICENSE
@@ -40,5 +40,5 @@ Layout using [Pure CSS][pure] (BSD-3-Clause license) compiled from the
 [numpy]: http://www.numpy.org/
 [numpy-license]: http://www.numpy.org/license.html#license
 [pure]: http://purecss.io/
+[pure-layout]: https://purecss.io/layouts/
 [pypcap]: https://pypi.python.org/pypi/pypcap
-[pure-site]: https://github.com/yahoo/pure-site

@@ -20,10 +20,9 @@
       </tbody>
     </table>
 
-    <!-- TODO: use a data list for allowed ratings -->
     <form id="rating-new-form" class="pure-form pure-form-aligned">
       <fieldset>
-        <input type="text" id="rating-new-text" placeholder="New rating">
+        <input type="text" id="rating-new-text" />
       </fieldset>
     </form>
   </div>
@@ -38,12 +37,24 @@
   ratingList('{{filename}}');
 
   var form = document.getElementById('rating-new-form');
+  var rating = document.getElementById('rating-new-text');
+  var ratings = [ {{!', '.join(['"{}"'.format(r) for r in conf.ratings])}} ];
+
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    var rating = document.getElementById('rating-new-text');
     ratingAdd('{{filename}}', rating.value);
-
     rating.value = '';
+  });
+
+  rating.addEventListener('awesomplete-selectcomplete', function(event) {
+    ratingAdd('{{filename}}', event.text);
+    rating.value = '';
+  });
+
+  new Awesomplete(rating, {
+    autoFirst: true,
+	  list: ratings,
+    minChars: 0
   });
 </script>
