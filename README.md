@@ -27,9 +27,9 @@ Install the *Python Libraries* listed below with your favorite tools and start
 
 ### Frontend
 
+- [Awesomplete][awesomplete] (MIT license)
 - [Pure CSS-Framework][pure] (BSD-3-Clause license)
 - [Responsive Side Menu, Pure Layout][pure-layout] (zLib license)
-- [Awesomplete][awesomplete] (MIT license)
 
 [awesomplete]: https://leaverou.github.io/awesomplete/
 [bottle]: http://bottlepy.org/

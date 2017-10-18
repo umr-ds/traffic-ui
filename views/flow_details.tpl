@@ -43,6 +43,15 @@
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
+    % if conf.enforce:
+    if(!ratings.includes(rating.value)) {
+      showHint('Undefined rating denied!');
+      rating.value = '';
+
+      return;
+    }
+    % end
+
     ratingAdd('{{filename}}', rating.value);
     rating.value = '';
   });

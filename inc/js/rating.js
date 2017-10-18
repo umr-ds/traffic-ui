@@ -1,3 +1,13 @@
+function showHint(msg) {
+  var respBox = document.getElementById('rating-table-response')
+  respBox.innerHTML = '<p>' + msg + '</p>';
+  respBox.className = '';
+
+  setTimeout(function() {
+    respBox.className = 'hidden';
+  }, 1750);
+}
+
 function ratingList(filename) {
   var xhttp = new XMLHttpRequest();
   xhttp.open('POST', '/rating/list', true);
@@ -32,15 +42,9 @@ function ratingChange(filename, rating, url, msg) {
       if (resp.status != 'ok')
         return;
 
-      var respBox = document.getElementById('rating-table-response')
-      respBox.innerHTML = '<p>' + msg + '</p>';
-      respBox.className = '';
+      showHint(msg);
 
       ratingList(filename);
-
-      setTimeout(function() {
-        respBox.className = 'hidden';
-      }, 1500);
     }
   };
   xhttp.send('filename=' + filename + '&rating=' + rating);

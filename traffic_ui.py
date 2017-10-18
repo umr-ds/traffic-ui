@@ -14,7 +14,8 @@ def parse_config(filename):
     from json import loads as parse_list
 
     Config = namedtuple(
-      'Config', ['host', 'port', 'input', 'cache', 'ratings', 'store'])
+      'Config',
+      ['host', 'port', 'input', 'cache', 'ratings', 'enforce', 'store'])
 
     config = ConfigParser()
     config.read(filename)
@@ -25,6 +26,7 @@ def parse_config(filename):
       config.get('dirs', 'input').rstrip('/'),
       config.get('dirs', 'cache').rstrip('/'),
       parse_list(config.get('ratings', 'ratings')),
+      config.getboolean('ratings', 'enforce'),
       config.get('ratings', 'store'))
 
 def flow_from_filename(filename):
