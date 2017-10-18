@@ -78,7 +78,14 @@ def show_random():
 @route('/show/<filename>')
 def show_pcap(filename):
     req_flow = flow_from_filename(filename)
-    return template('flow_details', filename=filename, flow=req_flow, conf=conf)
+
+    flow_files = filter(lambda f: f.endswith('.pcap'), listdir(conf.input))
+    index = flow_files.index(filename)
+    succ_id = index+1 if index < len(flow_files)-1 else 0
+
+    return template('flow_details',
+      filename=filename, flow=req_flow, conf=conf,
+      prec=flow_files[index-1], succ=flow_files[succ_id])
 
 @route('/plot/<filename>.png')
 def plot_pcap(filename):

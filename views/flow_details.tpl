@@ -1,6 +1,15 @@
 % rebase('base.tpl', title='Flowdetails', subtitle=filename)
 
 <div class="pure-g">
+  <div class="pure-u-1-2"><a class="pure-menu-link" href="/show/{{prec}}">
+    <i class="arrow left"></i> Previous
+  </a></div>
+  <div class="pure-u-1-2"><a class="pure-menu-link" style="text-align: right;" href="/show/{{succ}}">
+    Next <i class="arrow right"></i>
+  </a></div>
+</div>
+
+<div class="pure-g">
   <div class="pure-u-5-6">
     <img class="pure-img" src="/plot/{{filename}}.png" />
   </div>
