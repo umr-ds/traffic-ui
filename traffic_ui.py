@@ -105,6 +105,10 @@ def rating_list():
  
 @route('/rating/add', method='POST')
 def rating_add():
+    rating = request.forms.get('rating')
+    if conf.enforce and rating not in conf.ratings:
+        return {'status': 'fail', 'msg': 'Rating is not allowed.'}
+
     return rating_request(lambda f, r: f.ratings + [r])
 
 @route('/rating/del', method='POST')
