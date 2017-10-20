@@ -10,6 +10,7 @@ from pickle import dump as pickle, load as unpickle
 'Storeage for csv-entries in the store_filename.'
 CSVRow = namedtuple('CSVRow', ['filename', 'hash', 'ratings'])
 
+
 def csv_row_to_list(csvrow):
     'Converts a CSVRow to a simple list.'
     return [csvrow.filename, csvrow.hash] + csvrow.ratings
@@ -31,7 +32,7 @@ class flow(fi_flow):
         '''Saves or fetches a plot to a cache observed by a Flowfactory and
            returns the complete path of the file.'''
         plot_path = flow_factory.cache_path + "/" + \
-          Flowfactory.pickle_name(self._filename, ext='.png')
+         Flowfactory.pickle_name(self._filename, ext='.png')
 
         if not path.isfile(plot_path):
             import matplotlib
@@ -79,7 +80,7 @@ class Flowfactory:
 
         with open(self.store_filename, 'r') as in_store:
             reader = csv.reader(in_store)
-            return map(lambda r: CSVRow(r[0], r[1], r[2:len(r)]), reader)
+            return map(lambda r: CSVRow(r[0], r[1], r[2:]), reader)
 
     def add_store(self, flow):
         'Adds a new or existing flow to the store.'
@@ -101,7 +102,7 @@ class Flowfactory:
 
         if save_store:
             self.add_store(flow)
-        
+
     def get_flow(self, filename):
         '''Returns a flow for the given filename from the original file or the
            cached file and creates a cache file if it doesn't exists yet.'''
@@ -123,7 +124,8 @@ class Flowfactory:
 
             if ret_flow.hash != Flowfactory.head_hash(filename):
                 # pcap-file was changed, remove it from cache and start clean
-                img_file = self.cache_path + '/' + self.pickle_name(filename, ext='.png')
+                img_file = self.cache_path + '/' \
+                  + self.pickle_name(filename, ext='.png')
 
                 remove(pickle_file)
                 if path.isfile(img_file):
@@ -133,7 +135,7 @@ class Flowfactory:
 
         # Check if there is a storage-entry for this flow and, if present
         # check both ratings and override the stored ones, if they differ.
-        store_vals = filter(lambda r: r.filename == filename, self.read_store())
+        store_vals = [r for r in self.read_store() if r.filename == filename]
         if store_vals:
             store_val = store_vals[0]
             if ret_flow.ratings != store_val.ratings and ret_flow.hash == store_val.hash:
@@ -142,12 +144,16 @@ class Flowfactory:
 
         return ret_flow
 
+    @staticmethod
+    def flow_list(input_dir):
+        'Returns a sorted list of pcaps from input_dir.'
+        flow_files = filter(lambda f: f.endswith('.pcap'), listdir(input_dir))
+        return sorted(flow_files)
+
     def all_flows(self, input_dir):
         'Creates a list of pcaps in input_dir as a tuple with stored ratings.'
         flow_dicts = dict((path.basename(r[0]), r[2]) for r in self.read_store())
-        flow_files = filter(lambda f: f.endswith('.pcap'), listdir(input_dir))
-
-        return map(lambda f: (f, flow_dicts.get(f, [])), flow_files)
+        return [(f, flow_dicts.get(f, [])) for f in Flowfactory.flow_list(input_dir)]
 
     @staticmethod
     def head_hash(filename):

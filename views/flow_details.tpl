@@ -15,8 +15,6 @@
   </div>
   <div class="pure-u-1-6">
     <h2 class="content-subhead">Ratings</h2>
-    <aside id="rating-table-response" class="hidden">
-    </aside>
 
     <table class="pure-table pure-table-bordered">
       <thead>
@@ -34,6 +32,9 @@
         <input type="text" id="rating-new-text" />
       </fieldset>
     </form>
+
+    <aside id="rating-table-response" class="hidden">
+    </aside>
   </div>
 </div>
 
