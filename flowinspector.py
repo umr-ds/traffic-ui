@@ -268,13 +268,15 @@ class flow:
     def show(self, scale="linear", show=True):
         import matplotlib.pyplot as plt
         import matplotlib.patches as mpatches
+
+        fig = plt.figure()
         
         sampling_frequency = 1.0
         x_axis = np.arange(0, int(self.duration + 20), 1.0/sampling_frequency)
 
         forward_traffic = computeTrafficGraph(self.forward, 0.0, self.duration, sampling_frequency)
         backward_traffic = computeTrafficGraph(self.backward, 0.0, self.duration, sampling_frequency)
-        fig, ax1 = plt.subplots()
+        ax1 = fig.add_subplot(111)
         ax1.plot(x_axis[:len(forward_traffic)], forward_traffic, lw=2, c="red")
         ax1.plot(x_axis[:len(backward_traffic)], backward_traffic, lw=2, c="blue")
         

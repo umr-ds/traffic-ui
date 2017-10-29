@@ -45,6 +45,10 @@ with import <nixpkgs> {};
       enableGtk2 = true;
     };
 
-  in python27.withPackages (ps: [
-    ps.bottle matplotlib ps.netaddr ps.numpy pypcap ])
+  in python27.buildEnv.override {
+    # compare https://github.com/NixOS/nixpkgs/issues/22319
+    ignoreCollisions = true;
+    extraLibs = with python27Packages; [
+      bottle netaddr numpy plotly requests] ++ [matplotlib pypcap];
+  }
 ).env
