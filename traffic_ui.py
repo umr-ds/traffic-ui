@@ -131,10 +131,10 @@ def rating_del():
 
 
 # Static files (CSS, JS, …)
-@route('/inc/<path:path>')
-def static_route(path):
+@route('/inc/<static_path:path>')
+def static_route(static_path):
     return static_file(
-      path, root=path.dirname(path.realpath(__file__)) + '/inc')
+      static_path, root=path.dirname(path.realpath(__file__)) + '/inc')
 
 
 if __name__ == "__main__":
