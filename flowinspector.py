@@ -284,7 +284,8 @@ class flow:
         ax2.scatter([t for t, s, _ in self.forward], [s for t, s, _ in self.forward], alpha=0.3, c="red")
         ax2.scatter([t for t, s, _ in self.backward], [s for t, s, _ in self.backward], alpha=0.3, c="blue")
         
-        plt.legend(handles = [mpatches.Patch(color='red', label='forward'), mpatches.Patch(color='blue', label='backward')])
+        if show:
+            plt.legend(handles = [mpatches.Patch(color='red', label='forward'), mpatches.Patch(color='blue', label='backward')])
         ax1.set_xlabel('time (s)')
         ax1.set_ylabel('traffic (bytes/s)')
         ax2.set_ylabel('packet size (byte)')

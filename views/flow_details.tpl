@@ -11,7 +11,7 @@
 
 <div class="pure-g">
   <div class="pure-u-5-6">
-    <img class="pure-img" src="/plot/{{filename}}.png" />
+    {{!plot}}
   </div>
   <div class="pure-u-1-6">
     <h2 class="content-subhead">Ratings</h2>
@@ -76,4 +76,7 @@
 	  list: ratings,
     minChars: 0
   });
+
+  // Trigger autoscale of the plotly-plot after rendering
+  document.querySelector('[data-title="Autoscale"]').click();
 </script>

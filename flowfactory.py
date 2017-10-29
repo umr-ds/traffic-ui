@@ -28,24 +28,33 @@ class flow(fi_flow):
         self.lookupASN()
         self.hash = Flowfactory.head_hash(filename)
 
-    def plot_path(self, flow_factory):
+    def plot_data(self, flow_factory):
         '''Saves or fetches a plot to a cache observed by a Flowfactory and
-           returns the complete path of the file.'''
+           returns the HTML-version of the plot.'''
         plot_path = flow_factory.cache_path + "/" + \
-         Flowfactory.pickle_name(self._filename, ext='.png')
+         Flowfactory.pickle_name(self._filename, ext='.inc')
 
         if not path.isfile(plot_path):
-            import matplotlib
-            matplotlib.use('Agg')
+            from plotly.offline import plot
+            from plotly.tools import mpl_to_plotly
 
-            import matplotlib.pyplot as plt
-            plt.rcParams['figure.figsize'] = (9, 7)
+            plt = self.show(show=False)
+            plt.tight_layout()
 
-            plot = self.show(show=False)
-            plot.savefig(plot_path, format='png')
-            plot.close()
+            fig = plt.gcf()
+            plotly_fig = mpl_to_plotly(fig)
 
-        return plot_path
+            plot_div = plot(plotly_fig,
+              show_link=False, output_type='div', include_plotlyjs=False)
+
+            with open(plot_path, 'w') as outpt:
+                outpt.write(plot_div)
+                outpt.close()
+        else:
+            with open(plot_path, 'r') as inpt:
+                plot_div = inpt.read()
+
+        return plot_div
 
     def rating_csv(self):
         'Returns a csv-like list of rating-values for this flow.'

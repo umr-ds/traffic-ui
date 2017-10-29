@@ -94,15 +94,8 @@ def show_pcap(filename):
     succ_id = index+1 if index < len(flow_files)-1 else 0
 
     return template('flow_details',
-      filename=filename, flow=req_flow, conf=conf,
-      prec=flow_files[index-1], succ=flow_files[succ_id])
-
-
-@route('/plot/<filename>.png')
-def plot_pcap(filename):
-    req_flow = flow_from_filename(filename)
-    filepath = req_flow.plot_path(flow_factory)
-    return static_file(path.basename(filepath), root=path.dirname(filepath))
+      filename=filename, flow=req_flow, plot=req_flow.plot_data(flow_factory),
+      conf=conf, prec=flow_files[index-1], succ=flow_files[succ_id])
 
 
 # Flow ratings

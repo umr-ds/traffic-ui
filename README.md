@@ -23,11 +23,14 @@ Install the *Python Libraries* listed below with your favorite tools and start
 - [Matplotlib][matplotlib] ([Matplotlib license][matplotlib-license])
 - [netaddr][] (BSD-3-Clause license)
 - [NumPy][numpy] ([NumPy license][numpy-license])
+- [Plotly.py][plotly] (MIT license)
 - [pypcap][] (BSD-3-Clause license)
+- [requests][] required by Plotly (Apache license)
 
 ### Frontend
 
 - [Awesomplete][awesomplete] (MIT license)
+- [Plotly.js][plotly] (MIT license)
 - [Pure CSS-Framework][pure] (BSD-3-Clause license)
 - [Responsive Side Menu, Pure Layout][pure-layout] (zLib license)
 
@@ -39,6 +42,8 @@ Install the *Python Libraries* listed below with your favorite tools and start
 [nix]: https://nixos.org/nix/
 [numpy]: http://www.numpy.org/
 [numpy-license]: http://www.numpy.org/license.html#license
+[plotly]: https://plot.ly/
 [pure]: http://purecss.io/
 [pure-layout]: https://purecss.io/layouts/
 [pypcap]: https://pypi.python.org/pypi/pypcap
+[requests]: https://github.com/requests/requests

@@ -12,6 +12,7 @@
 
     <script src="/inc/js/awesomplete.min.js"></script>
     <script src="/inc/js/rating.js"></script>
+    <script src="/inc/js/plotly-latest.min.js"></script>
 </head>
 <body>
 <div id="layout">
