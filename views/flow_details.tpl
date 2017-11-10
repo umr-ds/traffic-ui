@@ -38,10 +38,37 @@
   </div>
 </div>
 
-<h2 class="content-subhead">tl;dr</h2>
-<pre>
-{{repr(flow)}}
-</pre>
+<h2 class="content-subhead">Detail</h2>
+<table class="pure-table pure-table-bordered">
+  <tbody>
+  % for k,v in flow.html_repr()['meta']:
+    <tr>
+      <td>{{k}}</td>
+      <td>{{v}}</td>
+    </tr>
+  % end
+  </tbody>
+</table>
+
+<h3 class="content-subhead">Metrics</h3>
+<table class="pure-table pure-table-bordered">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Forwards</th>
+      <th>Backwards</th>
+    </tr>
+  </thead>
+  <tbody>
+  % for t,f,b in flow.html_repr()['metric']:
+    <tr>
+      <td>{{t}}</td>
+      <td>{{f}}</td>
+      <td>{{b}}</td>
+    </tr>
+  % end
+  </tbody>
+</table>
 
 <script>
   ratingList('{{filename}}');

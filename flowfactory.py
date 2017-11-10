@@ -92,6 +92,37 @@ class flow(fi_flow):
         'Returns a csv-like list of rating-values for this flow.'
         return CSVRow(self._filename, self.hash, self.ratings)
 
+    def html_repr(self):
+        'Returns a dict of "meta" data and "metrics".'
+        from socket import inet_ntoa
+
+        def create_metric_data(m):
+            return [
+              '{:.2f}, {:.2f}'.format(m['iat_avg'], m['iat_std']),
+              '{:.2f}, {:.2f}'.format(m['traffic_avg'], m['traffic_std']),
+              str(m['dscp_median']),
+              str(m['bytes']),
+              '{:.2f}, {:.2f}'.format(m['bytes_std'], m['bytes_avg']),
+              str(m['packets'])]
+
+        repr_data = [
+          ('Source', '{}:{}'.format(inet_ntoa(self.srcip), self.srcport)),
+          ('Destination', '{}:{}'.format(inet_ntoa(self.dstip), self.dstport))]
+
+        if hasattr(self, 'asn'):
+            repr_data += [
+              ('Autonomous system', '{} ({})'.format(self.as_name, self.asn)),
+              ('BGP prefix', str(self.bgp_prefix))]
+
+        metric_name = [ 'Interarrival (avg, std)', 'Traffic (avg, std)',
+          'DSCP (median)', 'Bytes', 'Bytes (std, avg)', 'Packets']
+        metric_fwd = create_metric_data(self.fmetric)
+        metric_bckwd = create_metric_data(self.bmetric)
+
+        metric_data = zip(metric_name, metric_fwd, metric_bckwd)
+
+        return { 'meta': repr_data, 'metric': metric_data }
+
 
 class Flowfactory:
     'A class to store ratings and cached versions of flows and auto-load them.'
