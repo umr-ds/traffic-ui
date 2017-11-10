@@ -14,9 +14,9 @@ def parse_config(filename):
     from collections import namedtuple
     from json import loads as parse_list
 
-    Config = namedtuple(
-      'Config',
-      ['host', 'port', 'input', 'cache', 'ratings', 'enforce', 'store'])
+    Config = namedtuple('Config',
+      ['host', 'port', 'input', 'cache', 'ratings', 'enforce', 'store',
+       'plot_backend'])
 
     config = ConfigParser()
     config.read(filename)
@@ -28,7 +28,8 @@ def parse_config(filename):
       config.get('dirs', 'cache').rstrip('/'),
       parse_list(config.get('ratings', 'ratings')),
       config.getboolean('ratings', 'enforce'),
-      config.get('ratings', 'store'))
+      config.get('ratings', 'store'),
+      config.get('plot', 'backend'))
 
 
 def flow_from_filename(filename):
@@ -94,7 +95,8 @@ def show_pcap(filename):
     succ_id = index+1 if index < len(flow_files)-1 else 0
 
     return template('flow_details',
-      filename=filename, flow=req_flow, plot=req_flow.plot_data(flow_factory),
+      filename=filename, flow=req_flow,
+      plot=req_flow.plot_data(flow_factory, conf.plot_backend),
       conf=conf, prec=flow_files[index-1], succ=flow_files[succ_id])
 
 

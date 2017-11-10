@@ -77,6 +77,8 @@
     minChars: 0
   });
 
+  % if conf.plot_backend == 'plotly':
   // Trigger autoscale of the plotly-plot after rendering
   document.querySelector('[data-title="Autoscale"]').click();
+  % end
 </script>

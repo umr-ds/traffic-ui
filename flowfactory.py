@@ -28,31 +28,63 @@ class flow(fi_flow):
         self.lookupASN()
         self.hash = Flowfactory.head_hash(filename)
 
-    def plot_data(self, flow_factory):
+    def plot_png_data(self, plot_path):
+        '''Reads a PNG-image from a plot_path and returns a base64-encoded
+           HTML-image-tag.'''
+        from base64 import b64encode
+
+        with open(plot_path, 'r') as inpt:
+            plot_raw = inpt.read()
+
+        return '<img class="pure-img" src="data:image/png;base64,{}" />'.format(
+          b64encode(plot_raw))
+
+    def plot_data(self, flow_factory, backend):
         '''Saves or fetches a plot to a cache observed by a Flowfactory and
            returns the HTML-version of the plot.'''
+        if backend not in flow_factory.plot_backends:
+            raise Exception('Unknown plot-backend specified.')
+
         plot_path = flow_factory.cache_path + "/" + \
-         Flowfactory.pickle_name(self._filename, ext='.inc')
+          Flowfactory.pickle_name(self._filename, ext='.{}'.format(backend))
 
         if not path.isfile(plot_path):
-            from plotly.offline import plot
-            from plotly.tools import mpl_to_plotly
+            # This list must be synchronized with Flowfactory.plot_backends!
+            if backend == 'plotly':
+                from plotly.offline import plot
+                from plotly.tools import mpl_to_plotly
+    
+                plt = self.show(show=False)
+                plt.tight_layout()
+    
+                plotly_fig = mpl_to_plotly(plt.gcf())
+                plotly_fig['layout']['showlegend'] = True;
+    
+                plot_div = plot(plotly_fig,
+                  show_link=False, output_type='div', include_plotlyjs=False)
+    
+                with open(plot_path, 'w') as outpt:
+                    outpt.write(plot_div)
+                    outpt.close()
 
-            plt = self.show(show=False)
-            plt.tight_layout()
+            elif backend == 'png':
+                import matplotlib
+                matplotlib.use('Agg')
+                import matplotlib.pyplot as plt
+                plt.rcParams['figure.figsize'] = (9, 7)
 
-            plotly_fig = mpl_to_plotly(plt.gcf())
-            plotly_fig['layout']['showlegend'] = True;
+                plot = self.show(show=False)
+                plot.savefig(plot_path, format='png')
+                plot.close()
 
-            plot_div = plot(plotly_fig,
-              show_link=False, output_type='div', include_plotlyjs=False)
+                plot_div = self.plot_png_data(plot_path)
 
-            with open(plot_path, 'w') as outpt:
-                outpt.write(plot_div)
-                outpt.close()
         else:
-            with open(plot_path, 'r') as inpt:
-                plot_div = inpt.read()
+            if backend == 'plotly':
+                with open(plot_path, 'r') as inpt:
+                    plot_div = inpt.read()
+            elif backend == 'png':
+                plot_div = self.plot_png_data(plot_path)
 
         return plot_div
 
@@ -63,6 +95,8 @@ class flow(fi_flow):
 
 class Flowfactory:
     'A class to store ratings and cached versions of flows and auto-load them.'
+
+    plot_backends = ['png', 'plotly']
 
     def __init__(self, cache_path, store_filename):
         self.cache_path = cache_path
@@ -133,12 +167,14 @@ class Flowfactory:
 
             if ret_flow.hash != Flowfactory.head_hash(filename):
                 # pcap-file was changed, remove it from cache and start clean
-                img_file = self.cache_path + '/' \
-                  + self.pickle_name(filename, ext='.png')
-
                 remove(pickle_file)
-                if path.isfile(img_file):
-                    remove(img_file)
+
+                for plt_ext in self.plot_backends:
+                    img_file = self.cache_path + '/' \
+                      + self.pickle_name(filename, ext='.{}'.format(plt_ext))
+
+                    if path.isfile(img_file):
+                        remove(img_file)
 
                 return self.get_flow(filename)
 
