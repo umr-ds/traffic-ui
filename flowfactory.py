@@ -41,8 +41,8 @@ class flow(fi_flow):
             plt = self.show(show=False)
             plt.tight_layout()
 
-            fig = plt.gcf()
-            plotly_fig = mpl_to_plotly(fig)
+            plotly_fig = mpl_to_plotly(plt.gcf())
+            plotly_fig['layout']['showlegend'] = True;
 
             plot_div = plot(plotly_fig,
               show_link=False, output_type='div', include_plotlyjs=False)
