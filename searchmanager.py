@@ -3,6 +3,21 @@
 
 
 class SearchManager:
+    '''The SearchManager combines the data from the Flowfactory and the
+       MetaManager to guarantee best search results based on queries.
+
+       Queries will be logical AND-combined. The type of the query can
+       be writen with a colon followed by the tag.
+
+        :as=Foerder
+        :asn=2323
+        :bgp=123.123.123.123/24
+        :source=10.0.0.1
+        :dest=10.0.0.1
+        :rating=upload
+        :file=my-snip.pcap
+       '''
+
     def __init__(self, flow_factory, meta_manager, flow_store):
         self.flow_factory = flow_factory
         self.meta_manager = meta_manager
@@ -32,28 +47,48 @@ class SearchManager:
         return self._data_pair_dict().values()
 
     @staticmethod
-    def _filter_fun(data_pair, opts):
-        for opt in opts:
-            if opt[0] == 'as' and data_pair[0].as_name and opt[1] in data_pair[0].as_name:
-                return True
-            if opt[0] == 'asn' and data_pair[0].asn == opt[1]:
-                return True
-            if opt[0] == 'bgp' and opt[1] in data_pair[0].bgp_prefix:
-                return True
-            if opt[0] == 'source' and data_pair[0].src_ip == opt[1]:
-                return True
-            if opt[0] == 'destination' and data_pair[0].dst_ip == opt[1]:
-                return True
-            if opt[0] == 'port' and (str(data_pair[0].src_port) == opt[1] or str(data_pair[0].dst_port) == opt[1]):
-                return True
-            if opt[0] == 'rating' and opt[1] in data_pair[1]:
-                return True
-            if opt[0] == 'file' and opt[1] in data_pair[0].filename:
-                return True
-            return False
+    def _query_splitter(query):
+        'Creates a list of tuples (key, query) for search keyboards.'
+        import re
+
+        pattern = re.compile(':([a-z]+)=(\S+)')
+        for part in re.split('\s+', query):
+            part_match = pattern.search(part)
+            if part_match:
+                yield part_match.group(1, 2)
+            else:
+                yield (None, part)
+
+    @staticmethod
+    def _filter_fun(data_pair, queries):
+        'Checks if a data_pair matches a query from _query_splitter.'
+        chks = {
+            # str/None -> ((data_pair, query) -> bool)
+            'as':     lambda dp, q: dp[0].as_name and q in dp[0].as_name,
+            'asn':    lambda dp, q: str(dp[0].asn) == q,
+            'bgp':    lambda dp, q: dp[0].bgp_prefix and q in dp[0].bgp_prefix,
+            'source': lambda dp, q: dp[0].src_ip == q,
+            'dest':   lambda dp, q: dp[0].dst_ip == q,
+            'port':   lambda dp, q: str(dp[0].src_port) == q or str(dp[0].dst_port) == q,
+            'rating': lambda dp, q: q in dp[1],
+            'file':   lambda dp, q: q in dp[0].filename
+        }
+
+        for query in queries:
+            if query[0] is not None:
+                chk = chks[query[0]]
+                if not chk(data_pair, query[1]):
+                    return False
+            else:
+                flag = False
+                for chk in chks.values():
+                    if chk(data_pair, query[1]):
+                        flag = True
+                if not flag:
+                    return False
+        return True
 
     def search(self, query):
-        from parse import findall
-
-        opts = [r.fixed for r in findall(':{:w}={:S}', query)]
-        return filter(lambda dp: self._filter_fun(dp, opts), self.data_pairs())
+        'Returns a list of matching data_pairs for a query.'
+        queries = list(self._query_splitter(query))
+        return filter(lambda dp: self._filter_fun(dp, queries), self.data_pairs())
