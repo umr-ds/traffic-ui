@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from bottle import abort, redirect, request, route, run, static_file, template
+from operator import itemgetter
 from os import makedirs, path
 from flowfactory import flow, Flowfactory
 from metamanager import MetaManager
@@ -73,7 +74,7 @@ def rating_request(fun):
 # List available pcaps (index)
 @route('/')
 def index():
-    return template('index', flows=flow_factory.all_flows(conf.input))
+    return template('index')
 
 
 # Flow details and plot
@@ -132,8 +133,9 @@ def search():
     query = request.forms.get('q')
     if query is None:
         return {'status': 'fail', 'msg': 'No given query \'q\'.'}
-    result = [path.basename(r[0].filename) for r in search_manager.search(query)]
-    return {'result': result}
+    result = [{'file': path.basename(r[0].filename), 'ratings': r[1]} 
+              for r in search_manager.search(query)]
+    return {'status': 'ok', 'result': sorted(result, key=itemgetter('file'))}
 
 
 # Static files (CSS, JS, …)
@@ -174,4 +176,4 @@ if __name__ == "__main__":
     meta_manager = MetaManager(flow_factory, conf.input, background=True)
     search_manager = SearchManager(flow_factory, meta_manager, conf.input)
 
-    run(host=conf.host, port=conf.port)
+    run(host=conf.host, port=conf.port, debug=True)

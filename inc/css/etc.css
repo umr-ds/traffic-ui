@@ -22,3 +22,8 @@ aside {
     transform: rotate(135deg);
     -webkit-transform: rotate(135deg);
 }
+
+#overview-tbl-fieldset {
+    margin: auto;
+    width: 75%;
+}

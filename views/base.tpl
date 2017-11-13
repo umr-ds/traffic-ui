@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/inc/css/side-menu.css">
 
     <script src="/inc/js/awesomplete.min.js"></script>
+    <script src="/inc/js/overview.js"></script>
     <script src="/inc/js/rating.js"></script>
     <script src="/inc/js/plotly-latest.min.js"></script>
 </head>

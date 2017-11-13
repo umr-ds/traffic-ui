@@ -75,7 +75,7 @@ class SearchManager:
         }
 
         for query in queries:
-            if query[0] is not None:
+            if query[0] in chks.keys():
                 chk = chks[query[0]]
                 if not chk(data_pair, query[1]):
                     return False
