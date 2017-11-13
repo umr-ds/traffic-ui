@@ -158,10 +158,8 @@ class Flowfactory:
 
     def add_store(self, flow):
         'Adds a new or existing flow to the store.'
-        current_store = filter(
-          lambda r: r.filename != flow._filename, self.read_store())
-        current_store = filter(
-          lambda r: len(r.ratings) > 0, current_store)
+        current_store = [r for r in self.read_store()
+          if r.filename != flow._filename and len(r.ratings) > 0]
 
         with open(self.store_filename, 'w+') as out_store:
             writer = csv.writer(out_store)
