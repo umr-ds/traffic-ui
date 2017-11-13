@@ -49,6 +49,7 @@ with import <nixpkgs> {};
     # compare https://github.com/NixOS/nixpkgs/issues/22319
     ignoreCollisions = true;
     extraLibs = with python27Packages; [
-      bottle netaddr numpy plotly requests] ++ [matplotlib pypcap] ++ [python27Packages.ipython];
+      bottle netaddr numpy parse plotly requests] ++
+      [matplotlib pypcap] ++ [python27Packages.ipython];
   }
 ).env

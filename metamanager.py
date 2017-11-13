@@ -42,11 +42,13 @@ def flow_to_meta_flow(f):
 class MetaManager(Thread):
     'The MetaManager interacts with the Flowfactory to handle metadata.'
 
-    def __init__(self, flowfactory, flow_store, sync=True, background=True):
-        self.flowfactory = flowfactory
+    def __init__(self, flow_factory, flow_store, sync=False, background=False):
+        '''sync:       synchronize pcaps in the same thread at start
+           background: be a Thread where pcaps are scanned every minute'''
+        self.flow_factory = flow_factory
         self.flow_store = flow_store
         self.meta_store = {}
-        self.meta_cache = '{}/meta_cache.csv'.format(flowfactory.cache_path)
+        self.meta_cache = '{}/meta_cache.csv'.format(flow_factory.cache_path)
 
         self._read_store()
 
@@ -100,7 +102,7 @@ class MetaManager(Thread):
               Flowfactory.head_hash(f) == self.meta_store[f].hash:
                 continue
 
-            flow = self.flowfactory.get_flow(f)
+            flow = self.flow_factory.get_flow(f)
             meta_flow = flow_to_meta_flow(flow)
             self.meta_store.update({meta_flow.filename: meta_flow})
             changes += 1
@@ -144,4 +146,4 @@ if __name__ == '__main__':
 
     flow_factory = Flowfactory(conf.cache, conf.store)
 
-    meta_manager = MetaManager(flow_factory, conf.input, background=False)
+    meta_manager = MetaManager(flow_factory, conf.input, sync=False)

@@ -23,6 +23,7 @@ Install the *Python Libraries* listed below with your favorite tools and start
 - [Matplotlib][matplotlib] ([Matplotlib license][matplotlib-license])
 - [netaddr][] (BSD-3-Clause license)
 - [NumPy][numpy] ([NumPy license][numpy-license])
+- [Parse][parse] (MIT license)
 - [Plotly.py][plotly] (MIT license)
 - [pypcap][] (BSD-3-Clause license)
 - [requests][] required by Plotly (Apache license)
@@ -42,6 +43,7 @@ Install the *Python Libraries* listed below with your favorite tools and start
 [nix]: https://nixos.org/nix/
 [numpy]: http://www.numpy.org/
 [numpy-license]: http://www.numpy.org/license.html#license
+[parse]: https://github.com/r1chardj0n3s/parse
 [plotly]: https://plot.ly/
 [pure]: http://purecss.io/
 [pure-layout]: https://purecss.io/layouts/

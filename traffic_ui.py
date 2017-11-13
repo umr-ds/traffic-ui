@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from bottle import abort, redirect, request, route, run, static_file, template
-from flowfactory import flow, Flowfactory
 from os import makedirs, path
+from flowfactory import flow, Flowfactory
+from metamanager import MetaManager
+from searchmanager import SearchManager
 
 
 # Helper functions
@@ -125,6 +127,15 @@ def rating_del():
     return rating_request(lambda f, r: filter(lambda e: e != r, f.ratings))
 
 
+@route('/search', method='POST')
+def search():
+    query = request.forms.get('q')
+    if query is None:
+        return {'status': 'fail', 'msg': 'No given query \'q\'.'}
+    result = [path.basename(r[0].filename) for r in search_manager.search(query)]
+    return {'result': result}
+
+
 # Static files (CSS, JS, …)
 @route('/inc/<static_path:path>')
 def static_route(static_path):
@@ -160,4 +171,7 @@ if __name__ == "__main__":
     cymru.DB_PATH = conf.cache + '/asn.db'
 
     flow_factory = Flowfactory(conf.cache, conf.store)
-    run(host=conf.host, port=conf.port, debug=True, reloader=True)
+    meta_manager = MetaManager(flow_factory, conf.input, background=True)
+    search_manager = SearchManager(flow_factory, meta_manager, conf.input)
+
+    run(host=conf.host, port=conf.port)
