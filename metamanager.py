@@ -57,6 +57,7 @@ class MetaManager(Thread):
 
         if background:
             Thread.__init__(self)
+            self.daemon = True
             self.name = 'MetaManager'
             self.start()
 
