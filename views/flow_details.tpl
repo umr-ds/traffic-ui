@@ -41,10 +41,10 @@
 <h2 class="content-subhead">Detail</h2>
 <table class="pure-table pure-table-bordered">
   <tbody>
-  % for k,v in flow.html_repr()['meta']:
+  % for k, v in flow.html_repr()['meta']:
     <tr>
       <td>{{k}}</td>
-      <td>{{v}}</td>
+      <td>{{!v}}</td>
     </tr>
   % end
   </tbody>

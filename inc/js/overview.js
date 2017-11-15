@@ -11,7 +11,9 @@ function overviewTbl(query) {
       var tbody = document.getElementById('overview-tbl-body');
       tbody.innerHTML = resp.result.map(function(x) {
         var link = '<a class="pure-menu-link" href="/show/' + x.file + '">' + x.file + '</a>';
-        var ratings = x.ratings.join(', ');
+        var ratings = x.ratings.map(function (x) {
+          return '<a href="/#:rating=' + x + '">' + x + '</a>';
+        }).join(', ');
         return '<tr><td>' + link + '</td><td>' + ratings + '</td></tr>';
       }).join('');
     }
@@ -24,5 +26,16 @@ function overviewTblForm() {
 
   var txt = document.getElementById('overview-tbl-in').value;
   window.location.hash = '#' + txt;
-  overviewTbl(txt);
+}
+
+function updateQuery() {
+  var input = document.getElementById('overview-tbl-in');
+  var query = window.location.hash;
+
+  if (query.charAt(0) == '#') {
+    query = query.substr(1);
+  }
+
+  input.value = query;
+  overviewTbl(query);
 }

@@ -106,13 +106,13 @@ class flow(fi_flow):
               str(m['packets'])]
 
         repr_data = [
-          ('Source', '{}:{}'.format(inet_ntoa(self.srcip), self.srcport)),
-          ('Destination', '{}:{}'.format(inet_ntoa(self.dstip), self.dstport))]
+          ('Source', '<a href="/#:source={0}">{0}</a>:<a href="/#:port={1}">{1}</a>'.format(inet_ntoa(self.srcip), self.srcport)),
+          ('Destination', '<a href="/#:dest={0}">{0}</a>:<a href="/#:port={1}">{1}</a>'.format(inet_ntoa(self.dstip), self.dstport))]
 
         if hasattr(self, 'asn'):
             repr_data += [
-              ('Autonomous system', '{} ({})'.format(self.as_name, self.asn)),
-              ('BGP prefix', str(self.bgp_prefix))]
+              ('Autonomous system', '<a href="/#:asn={1}">{0} ({1})</a>'.format(self.as_name, self.asn)),
+              ('BGP prefix', '<a href="/#:bgp={0}">{0}</a>'.format(self.bgp_prefix))]
 
         metric_name = [ 'Interarrival (avg, std)', 'Traffic (avg, std)',
           'DSCP (median)', 'Bytes', 'Bytes (std, avg)', 'Packets']

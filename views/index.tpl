@@ -19,13 +19,7 @@
 </table>
 
 <script>
-  var query = window.location.hash;
-  if (query.charAt(0) == '#') {
-    query = query.substr(1);
-  }
+  updateQuery();
 
-  overviewTbl(query);
-
-  var input = document.getElementById('overview-tbl-in');
-  input.value = query;
+  window.onhashchange = updateQuery;
 </script>

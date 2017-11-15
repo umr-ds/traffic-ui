@@ -58,6 +58,7 @@ class MetaManager(Thread):
         if background:
             Thread.__init__(self)
             self.name = 'MetaManager'
+            self.start()
 
     def run(self):
         while True:
@@ -146,4 +147,4 @@ if __name__ == '__main__':
 
     flow_factory = Flowfactory(conf.cache, conf.store)
 
-    meta_manager = MetaManager(flow_factory, conf.input, sync=False)
+    meta_manager = MetaManager(flow_factory, conf.input, sync=True)
