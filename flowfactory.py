@@ -106,8 +106,8 @@ class flow(fi_flow):
               str(m['packets'])]
 
         repr_data = [
-          ('Source', '<a href="/#:source={0}">{0}</a>:<a href="/#:port={1}">{1}</a>'.format(inet_ntoa(self.srcip), self.srcport)),
-          ('Destination', '<a href="/#:dest={0}">{0}</a>:<a href="/#:port={1}">{1}</a>'.format(inet_ntoa(self.dstip), self.dstport))]
+          ('Source', '<a href="/#:src_ip={0}">{0}</a>:<a href="/#:sport={1}">{1}</a>'.format(inet_ntoa(self.srcip), self.srcport)),
+          ('Destination', '<a href="/#:dst_ip={0}">{0}</a>:<a href="/#:dport={1}">{1}</a>'.format(inet_ntoa(self.dstip), self.dstport))]
 
         if hasattr(self, 'asn'):
             repr_data += [

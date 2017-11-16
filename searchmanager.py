@@ -51,7 +51,7 @@ class SearchManager:
         'Creates a list of tuples (key, query) for search keyboards.'
         import re
 
-        pattern = re.compile(':([a-z]+)=(\S+)')
+        pattern = re.compile(':([a-z_]+)=(\S+)')
         for part in re.split('\s+', query):
             part_match = pattern.search(part)
             if part_match:
@@ -67,9 +67,11 @@ class SearchManager:
             'as':     lambda dp, q: dp[0].as_name and q in dp[0].as_name,
             'asn':    lambda dp, q: str(dp[0].asn) == q,
             'bgp':    lambda dp, q: dp[0].bgp_prefix and q in dp[0].bgp_prefix,
-            'source': lambda dp, q: dp[0].src_ip == q,
-            'dest':   lambda dp, q: dp[0].dst_ip == q,
-            'port':   lambda dp, q: str(dp[0].src_port) == q or str(dp[0].dst_port) == q,
+            'src_ip': lambda dp, q: q in dp[0].src_ip,
+            'dst_ip': lambda dp, q: q in dp[0].dst_ip,
+            'ip':     lambda dp, q: q in dp[0].dst_ip or q in dp[0].src_ip,
+            'sport':  lambda dp, q: str(dp[0].src_port) == q,
+            'dport':  lambda dp, q: str(dp[0].dst_port) == q,
             'rating': lambda dp, q: q in dp[1],
             'file':   lambda dp, q: q in dp[0].filename
         }
