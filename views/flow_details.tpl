@@ -1,4 +1,4 @@
-% rebase('base.tpl', title='Flowdetails', subtitle=filename)
+% rebase('base.tpl', title='Flowdetails', subtitle=filename, ratings=ratings)
 
 <div class="pure-g">
   <div class="pure-u-1-2"><a class="pure-menu-link" href="/show/{{prec}}">

@@ -1,4 +1,4 @@
-% rebase('base.tpl', title='Overview')
+% rebase('base.tpl', title='Flows', ratings=ratings)
 
 <form class="pure-form">
   <fieldset id="overview-tbl-fieldset">

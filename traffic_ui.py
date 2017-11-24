@@ -74,7 +74,7 @@ def rating_request(fun):
 # List available pcaps (index)
 @route('/')
 def index():
-    return template('index')
+    return template('index', ratings=conf.ratings)
 
 
 # Flow details and plot
@@ -84,7 +84,8 @@ def show_random():
     pcaps = [f[0] for f in flow_factory.all_flows(conf.input) if f[1] == []]
     if not pcaps:
         return template('base', title='Random plot',
-          base='<p>Sorry, but there are no unrated plots to show left.</p>')
+          base='<p>Sorry, but there are no unrated plots to show left.</p>',
+          ratings=conf.ratings)
     else:
         redirect('/show/{}'.format(choice(pcaps)))
 
@@ -100,7 +101,8 @@ def show_pcap(filename):
     return template('flow_details',
       filename=filename, flow=req_flow,
       plot=req_flow.plot_data(flow_factory, conf.plot_backend),
-      conf=conf, prec=flow_files[index-1], succ=flow_files[succ_id])
+      conf=conf, prec=flow_files[index-1], succ=flow_files[succ_id],
+      ratings=conf.ratings)
 
 
 # Flow ratings

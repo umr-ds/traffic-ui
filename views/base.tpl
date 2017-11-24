@@ -28,8 +28,11 @@
             <a class="pure-menu-heading">TrafficUI</a>
 
             <ul class="pure-menu-list">
-                <li class="pure-menu-item"><a href="/" class="pure-menu-link">Overview</a></li>
-                <li class="pure-menu-item"><a href="/show-random" class="pure-menu-link">Unrated Flow</a></li>
+                <li class="pure-menu-item"><a href="/" class="pure-menu-link">Flows</a></li>
+                % for rating in ratings:
+                <li class="pure-menu-item"><a href="/#:rating={{rating}}" class="pure-menu-link">&emsp;{{rating}}</a></li>
+                % end
+                <li class="pure-menu-item menu-item-divided"><a href="/show-random" class="pure-menu-link">Unrated Flow</a></li>
             </ul>
         </div>
     </div>
