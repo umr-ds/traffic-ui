@@ -38,4 +38,21 @@ function updateQuery() {
 
   input.value = query;
   overviewTbl(query);
+
+  searchHistory();
+}
+
+function searchHistory() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open('GET', '/search/hist', true);
+  xhttp.onload = function() {
+  	var list = JSON.parse(xhttp.responseText).history;
+    var ubody = document.getElementById('search-history');
+
+    ubody.innerHTML = list.map(function(x) {
+      var link = '<a class="pure-menu-link" href="#' + x + '">' + x + '</a>';
+      return '<li class="pure-menu-item">' + link + '</li>';
+    }).join('');
+  };
+  xhttp.send();
 }

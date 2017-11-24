@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from collections import deque
+
 
 class SearchManager:
     '''The SearchManager combines the data from the Flowfactory and the
@@ -22,6 +24,7 @@ class SearchManager:
         self.flow_factory = flow_factory
         self.meta_manager = meta_manager
         self.flow_store = flow_store
+        self._history = deque([], maxlen=5)
 
     def _data_pair_dict(self):
         'Returns a dict of pcap_path -> (MetaFlow, Ratings)'
@@ -92,5 +95,12 @@ class SearchManager:
 
     def search(self, query):
         'Returns a list of matching data_pairs for a query.'
+        if query and query not in self.history():
+            self._history.appendleft(query)
+
         queries = list(self._query_splitter(query))
         return filter(lambda dp: self._filter_fun(dp, queries), self.data_pairs())
+
+    def history(self):
+        'Return search-history for the last entries.'
+        return list(self._history)

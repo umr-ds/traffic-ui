@@ -7,6 +7,9 @@
   </fieldset>
 </form>
 
+<ul class="pure-menu-list" id="search-history">
+</ul>
+
 <table class="pure-table pure-table-striped">
 <thead>
   <tr>

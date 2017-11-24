@@ -142,6 +142,11 @@ def search():
     return {'status': 'ok', 'result': sorted(result, key=itemgetter('file'))}
 
 
+@route('/search/hist')
+def search_hist():
+    return {'history': search_manager.history()}
+
+
 @route('/upload', method='GET')
 def upload_get():
     return template('upload', ratings=conf.ratings)
