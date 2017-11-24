@@ -4,6 +4,7 @@
 from bottle import abort, redirect, request, route, run, static_file, template
 from operator import itemgetter
 from os import makedirs, path
+from struct import unpack
 from flowfactory import flow, Flowfactory
 from metamanager import MetaManager
 from searchmanager import SearchManager
@@ -18,8 +19,8 @@ def parse_config(filename):
     from json import loads as parse_list
 
     Config = namedtuple('Config',
-      ['host', 'port', 'input', 'cache', 'ratings', 'enforce', 'store',
-       'plot_backend'])
+      ['host', 'port', 'input', 'cache', 'upload_pass', 'ratings', 'enforce',
+       'store', 'plot_backend'])
 
     config = ConfigParser()
     config.read(filename)
@@ -29,6 +30,7 @@ def parse_config(filename):
       config.getint('httpd', 'port'),
       config.get('dirs', 'input').rstrip('/'),
       config.get('dirs', 'cache').rstrip('/'),
+      config.get('dirs', 'upload_password'),
       parse_list(config.get('ratings', 'ratings')),
       config.getboolean('ratings', 'enforce'),
       config.get('ratings', 'store'),
@@ -138,6 +140,45 @@ def search():
     result = [{'file': path.basename(r[0].filename), 'ratings': r[1]} 
               for r in search_manager.search(query)]
     return {'status': 'ok', 'result': sorted(result, key=itemgetter('file'))}
+
+
+@route('/upload', method='GET')
+def upload_get():
+    return template('upload', ratings=conf.ratings)
+
+
+@route('/upload', method='POST')
+def upload_post():
+    upload = request.files.get('upload')
+    password = request.forms.get('password')
+
+    if password != conf.upload_pass:
+        print('Upload failed due to a wrong password!')
+        return template('base', title='Upload',
+          base='<p>Password is wrong. This incident will be reported.</p>',
+          ratings=conf.ratings)
+
+    upload_data = upload.file.read()
+    upload.file.close()
+
+    magic_numb = unpack('>I', upload_data[:4])[0]
+    _, ext = path.splitext(upload.filename)
+    output_name = '{}/{}'.format(conf.input, upload.filename)
+
+    if magic_numb != 0xd4c3b2a1 or ext != '.pcap':
+        return template('base', title='Upload',
+          base='<p>Sorry, but your file doesn\'t seems to be a pcap-file.</p>',
+          ratings=conf.ratings)
+
+    if path.isfile(output_name):
+        return template('base', title='Upload',
+          base='<p>Sorry, but a flow for this name does already exists.</p>',
+          ratings=conf.ratings)
+
+    with open(output_name, 'wb') as f:
+        f.write(upload_data)
+
+    redirect('/show/{}'.format(upload.filename))
 
 
 # Static files (CSS, JS, …)
