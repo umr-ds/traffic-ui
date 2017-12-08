@@ -3,7 +3,7 @@
 <form class="pure-form">
   <fieldset id="overview-tbl-fieldset">
     <input type="text" class="pure-input" id="overview-tbl-in">
-    <button onclick="overviewTblForm()" class="pure-button pure-button-primary">Search</button>
+    <button class="pure-button pure-button-primary" id="overview-tbl-btn">Search</button>
   </fieldset>
 </form>
 
@@ -25,6 +25,12 @@
     updateQuery();
     searchHistory(awesome);
   };
+
+  var btn = document.getElementById('overview-tbl-btn');
+  btn.addEventListener('click', function(event) {
+    event.preventDefault();
+    overviewTblForm();
+  });
 
   var input = document.getElementById('overview-tbl-in');
   input.addEventListener('awesomplete-selectcomplete', function(event) {

@@ -22,10 +22,10 @@ function overviewTbl(query) {
 }
 
 function overviewTblForm() {
-  event.preventDefault();
-
   var txt = document.getElementById('overview-tbl-in').value;
   window.location.hash = '#' + txt;
+
+  return false;
 }
 
 function updateQuery() {
