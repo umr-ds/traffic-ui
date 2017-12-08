@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from bottle import abort, redirect, request, route, run, static_file, template
+from collections import namedtuple
 from operator import itemgetter
 from os import makedirs, path
 from struct import unpack
@@ -10,31 +11,72 @@ from metamanager import MetaManager
 from searchmanager import SearchManager
 
 
+# Config-object which will contain the configuration
+Config = namedtuple('Config',
+  ['host',          # httpd.host (localhost)
+   'port',          # httpd.port (8080)
+   'plot_backend',  # httpd.plotting (png)
+   'upload_pass',   # httpd.upload_password (NONE)
+   'input',         # dirs.input (NONE)
+   'cache',         # dirs.cache (NONE)
+   'store',         # ratings.store (NONE)
+   'ratings',       # ratings.ratings (upload,download,interactive)
+   'enforce'        # ratings.enforce (true)
+])
+
+
 # Helper functions
 def parse_config(filename):
     '''Reads the INI-config and returns a namedtuple called Config which
        contains the fields.'''
-    from ConfigParser import ConfigParser
-    from collections import namedtuple
-    from json import loads as parse_list
+    from ConfigParser import SafeConfigParser
 
-    Config = namedtuple('Config',
-      ['host', 'port', 'input', 'cache', 'upload_pass', 'ratings', 'enforce',
-       'store', 'plot_backend'])
+    conf_parser = SafeConfigParser(defaults={
+      # httpd
+      'host': 'localhost',
+      'port': 8080,
+      'plotting': 'png',
+      'upload_password': None,
+      # dirs
+      'input': '',
+      'cache': '',
+      # ratings
+      'store': None,
+      'ratings': 'upload,download,interactive',
+      'enforce': True
+    })
+    conf_parser.read(filename)
 
-    config = ConfigParser()
-    config.read(filename)
+    cfg = Config(
+      conf_parser.get('httpd', 'host'),
+      conf_parser.getint('httpd', 'port'),
+      conf_parser.get('httpd', 'plotting'),
+      conf_parser.get('httpd', 'upload_password'),
 
-    return Config(
-      config.get('httpd', 'host'),
-      config.getint('httpd', 'port'),
-      config.get('dirs', 'input').rstrip('/'),
-      config.get('dirs', 'cache').rstrip('/'),
-      config.get('dirs', 'upload_password'),
-      parse_list(config.get('ratings', 'ratings')),
-      config.getboolean('ratings', 'enforce'),
-      config.get('ratings', 'store'),
-      config.get('plot', 'backend'))
+      conf_parser.get('dirs', 'input').rstrip('/'),
+      conf_parser.get('dirs', 'cache').rstrip('/'),
+
+      conf_parser.get('ratings', 'store'),
+      conf_parser.get('ratings', 'ratings').split(','),
+      conf_parser.getboolean('ratings', 'enforce'))
+
+    if cfg.plot_backend not in Flowfactory.plot_backends:
+        print('Unsupported httpd.plotting-backend.')
+        exit(1)
+    if cfg.upload_pass is None:
+        print('No valid httpd.upload_password was specified.')
+        exit(1)
+    if cfg.input == '' or not path.isdir(cfg.input):
+        print('No valid dirs.input was specified.')
+        exit(1)
+    if cfg.cache == '':
+        print('No valid dirs.cache was specified.')
+        exit(1)
+    if cfg.store is None:
+        print('No valid ratings.store was specified.')
+        exit(1)
+
+    return cfg
 
 
 def flow_from_filename(filename):

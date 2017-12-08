@@ -115,37 +115,3 @@ class MetaManager(Thread):
                 changes += 1
 
         return changes
-
-
-if __name__ == '__main__':
-    import argparse
-    from traffic_ui import parse_config
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-      '-c', '--config', help='path to config (default: ./config.ini)')
-    args = parser.parse_args()
-
-    if args.config is None and not path.isfile('./config.ini'):
-        print('No config was found!\n' +
-          'Please place a config.ini in your current working directory or ' +
-          'supply a path by -c. If you\'re on a fresh instance, copy the ' +
-          'config-example.ini to config.ini and modify your copy.')
-        exit(1)
-
-    conf = parse_config(
-      args.config if args.config is not None else './config.ini')
-
-    try:
-        if not path.isdir(conf.cache):
-            makedirs(conf.cache)
-    except:
-        print('The cache-directory does not exists and can not be created!')
-        exit(1)
-
-    import cymru
-    cymru.DB_PATH = conf.cache + '/asn.db'
-
-    flow_factory = Flowfactory(conf.cache, conf.store)
-
-    meta_manager = MetaManager(flow_factory, conf.input, sync=True)
