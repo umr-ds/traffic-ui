@@ -1,12 +1,37 @@
 # TrafficUI
-A web-UI for assigning labels to existing flows.
+A web-UI for assigning labels to network flows present as *pcap*-files. Those
+flows can be queried, viewed, rated and uploaded.
+
+
+## Search
+The overview page contains a search field to query flows. A query may contain
+tags to search for a specific attribute. Multiple tags will be combined with
+a logical AND. If no tag was specified, the search will be applied for each
+possible attribute.
+
+The tag-syntax is `:TAG=SEARCH` where `TAG` is an element from the following
+list and `SEARCH` is your request. Multiple tags look like this:
+`:rating=upload :port=443`
+
+- `as`: Name of an autonomous system
+- `asn`: Exact autonomous system number
+- `bgp`: BGP-prefix
+- `src_ip`: Source IP-address
+- `dst_ip`: Destination IP-address
+- `ip`: Both source and destination IP-address
+- `sport`: Source port
+- `dport`: Destination port
+- `port`: Both source and destination port
+- `rating`: Assigned rating/label
+- `file`: Filename in file system
+
 
 ## Configuration
 Copy the `config-example.ini` to `config.ini` and configure it for your needs.
 You should at least change the upload password, the directories and the path
 to the rating's storage file.
 
-## `httpd` section
+### `httpd` section
 - `host`: The host or IP-address for the HTTP-server.
   (type: *string*, default: *localhost*)
 - `post`: The port on which the server will accept connections.
@@ -16,14 +41,14 @@ to the rating's storage file.
 - `upload_password`: The password to protect the web upload against missuse.
   (type: *string*, default: None)
 
-## `dirs` section
+### `dirs` section
 - `input`: The directory where all the *pcap*-files will be stored.
   (type: *directory*, default: None)
 - `cache`: The directory where the cached files will be stored. Perhaps you
   don't want this on a tmpfs, because rebuilding could take some time.
   (type: *directory*, default None)
 
-## `ratings` section
+### `ratings` section
 - `store`: A CSV-file which will contain all assigned ratings.
   (type: *file*, default: None)
 - `ratings`: A comma-separated list of available ratings.
@@ -43,6 +68,7 @@ $ nix-shell --run ./traffic_ui.py
 ### Other systems
 Install the *Python Libraries* listed below with your favorite tools and start
 `traffic_up.py`.
+
 
 ## Dependencies
 ### Backend, Python Libraries

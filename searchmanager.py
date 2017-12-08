@@ -14,8 +14,11 @@ class SearchManager:
         :as=Foerder
         :asn=2323
         :bgp=123.123.123.123/24
-        :source=10.0.0.1
-        :dest=10.0.0.1
+        :src_ip=10.0.0.1
+        :dst_ip=10.0.0.1
+        :sport=12345
+        :dport=80
+        :port=2323
         :rating=upload
         :file=my-snip.pcap
        '''
@@ -75,6 +78,7 @@ class SearchManager:
             'ip':     lambda dp, q: q in dp[0].dst_ip or q in dp[0].src_ip,
             'sport':  lambda dp, q: str(dp[0].src_port) == q,
             'dport':  lambda dp, q: str(dp[0].dst_port) == q,
+            'port':   lambda dp, q: str(dp[0].src_port) == q or str(dp[0].dst_port) == q,
             'rating': lambda dp, q: q in dp[1],
             'file':   lambda dp, q: q in dp[0].filename
         }
