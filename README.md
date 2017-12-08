@@ -57,22 +57,70 @@ to the rating's storage file.
   (type: *boolean*, default: *true*)
 
 
-## Starting
-### Nix/NixOS
-The `shell.nix`-file knows what to do. Just let [nix][] do the work for you.
+## Installation/Running
+### pip
+**Prerequisite:** Python 2.7 with [pip][] and [libpcap][]
 
 ```bash
-$ nix-shell --run ./traffic_ui.py
+pip install -r requirements.txt
+./traffic_ui.py
 ```
 
-### Other systems
-Install the *Python Libraries* listed below with your favorite tools and start
-`traffic_up.py`.
+### Nix/NixOS
+**Prerequisite:** [Nix][nix] Package Manager
+
+```bash
+nix-shell --run ./traffic_ui.py
+```
+
+### systemd-nspawn container
+**Prerequisite:** GNU/Linux distribution with systemd and [debootstrap][]
+(available in most distributions) 
+
+**WORK IN PROGRESS**
+```bash
+# Bootstrap a Debian as root user. This takes some time.
+cd /var/lib/machines/
+debootstrap --arch=amd64 stable debian-trafficui
+
+# Log in to container, set root's password and log out
+systemd-nspawn -UD debian-trafficui
+passwd
+^D
+
+# Boot container
+systemd-nspawn -bUD debian-trafficui
+# Now log in as root
+# Install required packages
+apt-get update
+apt-get install git python-pip libpcap-dev
+# Add a new user and set it's password
+useradd -m -s /bin/bash trafficui
+passwd trafficui
+^D
+
+# Let's login as trafficui and install the TrafficUI
+git clone https://github.com/umr-ds/traffic-ui.git
+cd traffic-ui/
+pip install -r requirements.txt
+cp config{-example,}.ini
+vi config.ini
+./traffic_ui.py
+# You should be able to visit the container's TrafficUI from the host
+^C ^D ^]^]^]
+
+# TODO:
+# * --private-network for the container
+# * systemd service for TrafficUI
+# * create an exportable container-file and import it again
+```
+
+### Docker container
+**TODO**
 
 
 ## Dependencies
 ### Backend, Python Libraries
-
 - [Bottle][bottle] (MIT license)
 - [Matplotlib][matplotlib] ([Matplotlib license][matplotlib-license])
 - [netaddr][] (BSD-3-Clause license)
@@ -82,7 +130,6 @@ Install the *Python Libraries* listed below with your favorite tools and start
 - [requests][] required by Plotly (Apache license)
 
 ### Frontend
-
 - [Awesomplete][awesomplete] (MIT license)
 - [Plotly.js][plotly] (MIT license)
 - [Pure CSS-Framework][pure] (BSD-3-Clause license)
@@ -90,12 +137,15 @@ Install the *Python Libraries* listed below with your favorite tools and start
 
 [awesomplete]: https://leaverou.github.io/awesomplete/
 [bottle]: http://bottlepy.org/
+[debootstrap]: https://wiki.debian.org/Debootstrap
+[libpcap]: http://www.tcpdump.org/
 [matplotlib]: https://matplotlib.org/
 [matplotlib-license]: https://github.com/matplotlib/matplotlib/blob/master/LICENSE/LICENSE
 [netaddr]: https://pypi.python.org/pypi/netaddr
 [nix]: https://nixos.org/nix/
 [numpy]: http://www.numpy.org/
 [numpy-license]: http://www.numpy.org/license.html#license
+[pip]: https://pip.pypa.io/
 [plotly]: https://plot.ly/
 [pure]: http://purecss.io/
 [pure-layout]: https://purecss.io/layouts/
