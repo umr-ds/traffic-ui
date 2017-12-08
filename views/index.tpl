@@ -2,13 +2,10 @@
 
 <form class="pure-form">
   <fieldset id="overview-tbl-fieldset">
-    <input type="text" class="pure-input-2-3" id="overview-tbl-in">
+    <input type="text" class="pure-input" id="overview-tbl-in">
     <button onclick="overviewTblForm()" class="pure-button pure-button-primary">Search</button>
   </fieldset>
 </form>
-
-<ul class="pure-menu-list" id="search-history">
-</ul>
 
 <table class="pure-table pure-table-striped">
 <thead>
@@ -24,5 +21,21 @@
 <script>
   updateQuery();
 
-  window.onhashchange = updateQuery;
+  window.onhashchange = function() {
+    updateQuery();
+    searchHistory(awesome);
+  };
+
+  var input = document.getElementById('overview-tbl-in');
+  input.addEventListener('awesomplete-selectcomplete', function(event) {
+    overviewTblForm();
+  });
+
+  var awesome = new Awesomplete(input, {
+	  list: [],
+    minChars: 1
+  });
+  searchHistory(awesome);
+
+  input.parentElement.classList.add('pure-u-2-3');
 </script>

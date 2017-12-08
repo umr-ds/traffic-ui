@@ -38,21 +38,22 @@ function updateQuery() {
 
   input.value = query;
   overviewTbl(query);
-
-  searchHistory();
 }
 
-function searchHistory() {
+function searchHistory(awesompleteObj) {
   var xhttp = new XMLHttpRequest();
   xhttp.open('GET', '/search/hist', true);
-  xhttp.onload = function() {
-  	var list = JSON.parse(xhttp.responseText).history;
-    var ubody = document.getElementById('search-history');
-
-    ubody.innerHTML = list.map(function(x) {
-      var link = '<a class="pure-menu-link" href="#' + x + '">' + x + '</a>';
-      return '<li class="pure-menu-item">' + link + '</li>';
-    }).join('');
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      hist = JSON.parse(this.responseText).history;
+      awesompleteObj.list = hist.map(function (x) {
+        return x.replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      });
+    }
   };
   xhttp.send();
 }
