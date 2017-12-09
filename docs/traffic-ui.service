@@ -1,0 +1,10 @@
+[Unit]
+Description=TrafficUI
+After=network-online.target
+
+[Service]
+ExecStart=/home/trafficui/traffic-ui/traffic_ui.py -c /home/trafficui/traffic-ui/config.ini
+User=trafficui
+
+[Install]
+WantedBy=multi-user.target

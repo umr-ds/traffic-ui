@@ -62,7 +62,7 @@ to the rating's storage file.
 **Prerequisite:** Python 2.7 with [pip][] and [libpcap][]
 
 ```bash
-pip install -r requirements.txt
+pip install -r docs/requirements.txt
 ./traffic_ui.py
 ```
 
@@ -70,7 +70,7 @@ pip install -r requirements.txt
 **Prerequisite:** [Nix][nix] Package Manager
 
 ```bash
-nix-shell --run ./traffic_ui.py
+nix-shell --run ./traffic_ui.py docs/shell.nix
 ```
 
 ### systemd-nspawn container
@@ -109,9 +109,18 @@ vi config.ini
 # You should be able to visit the container's TrafficUI from the host
 ^C ^D ^]^]^]
 
+# To autostart the TrafficUI with the system, install the systemd service
+systemd-nspawn -bUD debian-trafficui
+# Log in as root again
+cp ~trafficui/traffic-ui/docs/traffic-ui.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl start traffic-ui
+systemctl enable traffic-ui
+^D ^]^]^]
+
+
 # TODO:
 # * --private-network for the container
-# * systemd service for TrafficUI
 # * create an exportable container-file and import it again
 ```
 
