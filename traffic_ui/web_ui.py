@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from bottle import abort, redirect, request, route, run, static_file, template
+from bottle import abort, redirect, request, route, run, static_file, template, TEMPLATE_PATH
 from collections import namedtuple
 from operator import itemgetter
 from os import makedirs, path
@@ -268,6 +268,8 @@ def main():
     meta_manager = MetaManager(flow_factory, conf.input, background=True)
     search_manager = SearchManager(flow_factory, meta_manager, conf.input)
 
+    TEMPLATE_PATH.insert(
+      0, path.realpath(path.dirname(path.realpath(__file__)) + '/../views/'))
     run(host=conf.host, port=conf.port, debug=True)
 
 
