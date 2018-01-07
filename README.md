@@ -27,7 +27,7 @@ list and `SEARCH` is your request. Multiple tags look like this:
 
 
 ## Configuration
-Copy the `config-example.ini` to `config.ini` and configure it for your needs.
+Copy `docs/config-example.ini` to `config.ini` and configure it for your needs.
 You should at least change the upload password, the directories and the path
 to the rating's storage file.
 
@@ -77,7 +77,6 @@ nix-shell --run ./traffic_ui.py docs/shell.nix
 **Prerequisite:** GNU/Linux distribution with systemd and [debootstrap][]
 (available in most distributions) 
 
-**WORK IN PROGRESS**
 ```bash
 # Bootstrap a Debian as root user. This takes some time.
 cd /var/lib/machines/
@@ -117,15 +116,34 @@ systemctl daemon-reload
 systemctl start traffic-ui
 systemctl enable traffic-ui
 ^D ^]^]^]
-
-
-# TODO:
-# * --private-network for the container
-# * create an exportable container-file and import it again
 ```
 
 ### Docker container
-**TODO**
+**Prerequisite:** Docker
+
+Copy `docs/config-example.ini` to `config.ini` and set
+
+- in section `[httpd]` `host=0.0.0.0` and `port=8080`,
+- in section `[dirs]` `input=/input` and `cache=/cache` and
+- in section `[ratings]` `store=/store/file.csv`.
+
+All other values may be modified for your needs.
+
+Now build the container image.
+
+```bash
+docker build -t trafficui -f docs/Dockerfile .
+```
+
+Let's launch our container, bind it's port to our machine and share our host's
+input and store directory. The store directory will only contain the ratings
+file.
+
+```bash
+docker run -p 8080:8080 -v ~/pcaps:/input -v ~/ratings:/store --name trafficui trafficui
+```
+
+To stop the container try `^C` or `docker stop trafficui`.
 
 
 ## Dependencies
